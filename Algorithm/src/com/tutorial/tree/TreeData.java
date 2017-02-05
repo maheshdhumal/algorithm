@@ -1,9 +1,10 @@
 package com.tutorial.tree;
+import java.util.LinkedList;
+import java.util.Queue;
 /**
  * @author maheshd
  *
  */
-import com.tutorial.tree.Node;;
 
 
 public class TreeData {
@@ -12,6 +13,7 @@ public class TreeData {
 	private int height;
 	private int max;
 	private int min;
+	private int diameter;
 	
 	public Node getRoot() {
 		return root;
@@ -115,6 +117,156 @@ public class TreeData {
 		}
 	}
 	
+	private boolean searchNode(Node root,int data,boolean found)
+	{
+		if(root==null)
+		{
+			return false; 
+		}
+		if(root.getData()==data)
+		{
+			return true;
+		}
+		boolean foundLeft=searchNode(root.getLeft(), data,found);
+		boolean foundRight=searchNode(root.getRight(), data,found);
+		return (foundLeft || foundRight);
+	}
+	
+	private Node deleteNode(Node root,int data)
+	{
+		if (root == null) {
+			return root;
+		}
+		if (root.getData() == data) {
+			if(root.getRight()==null && root.getLeft()==null)
+			{
+				root=null;
+			}
+			else if (root.getLeft() != null && root.getLeft().getRight() != null) {
+				Node rightMostNode = findRightMostNode(root.getLeft());
+				root.setData(rightMostNode.getData());
+			} 
+			else if (root.getLeft() != null) 
+			{
+				Node rightSide=root.getRight();
+				root = root.getLeft();
+				root.setRight(rightSide);
+			}
+			else if(root.getLeft()==null)
+			{
+				root=root.getRight();
+			}
+			return root;
+		}
+		Node rootLeft = deleteNode(root.getLeft(), data);
+		Node rootRight = deleteNode(root.getRight(), data);
+		root.setLeft(rootLeft);
+		root.setRight(rootRight);
+		return root;
+		
+	}
+	
+	private int findDiameter(Node root)
+	{
+		if(root==null)
+		{
+			return 0 ;
+		}
+		int dLeft=findDiameter(root.getLeft());
+		int dRight=findDiameter(root.getRight());
+		if(this.diameter < (dLeft+dRight))
+		{
+			this.diameter=(dLeft+dRight+1);
+		}
+		return dLeft > dRight ? dLeft+1 : dRight+1;
+	}
+	
+
+	private Node findRightMostNode(Node root) {
+		if(root==null)
+		{
+			return null;
+		}
+		Node right=findRightMostNode(root.getRight());
+		if(right==null)
+		{
+			return root;
+		}
+		if(right==root.getRight())
+		{
+			root.setRight(right.getLeft());
+		}
+		return right;
+	}
+	
+	private void levelTraversalWithQueue(Node root)
+	{
+		Queue<Node> queueNode = new LinkedList<Node>();
+		queueNode.add(root);
+		while (!queueNode.isEmpty()) {
+			Node fromQueue = queueNode.poll();
+			System.out.println(" " + fromQueue.getData());
+			if (fromQueue.getLeft() != null) {
+				queueNode.add(fromQueue.getLeft());
+			}
+			if (fromQueue.getRight() != null) {
+				queueNode.add(fromQueue.getRight());
+			}
+		}
+	}
+	
+	private void levelTraversalWithOutQueue(Node root)
+	{
+		findHeight(root, 0);
+		for(int i=0;i<=this.height;i++)
+		{
+			traverse(root,i);
+		}
+	}
+
+	private void traverse(Node root, int i) {
+
+		if(root==null)
+		{
+			return;
+		}
+		if(i==0)
+		{
+			System.out.println(" "+root.getData());
+		}
+		else
+		{
+			traverse(root.getLeft(),i-1);
+			traverse(root.getRight(), i-1);
+		}
+	}
+	
+	private void inOrderTraversalWithOutRecursion(Node root)
+	{
+		Node current;
+		Node pre;
+		Node post;
+		current = root;
+		while (current != null) {
+			if (current.getLeft() != null) {
+				post=current;
+				pre = current.getLeft();
+				while (pre.getRight() != null) {
+					pre = pre.getRight();
+				}
+				current = current.getLeft();
+				post.setLeft(null);
+				pre.setRight(post);
+				
+			} else {
+				System.out.println(" "+current.getData());
+				current = current.getRight();
+			}
+		}
+		
+	}
+
+	
 
 	public static void main(String args[]) 
 	{
@@ -141,8 +293,18 @@ public class TreeData {
 		tree.printLeafNodes(tree.getRoot());
 		tree.findHeight(tree.getRoot(),0);
 		System.out.println("**** Height **** "+tree.height);
-		System.out.println("**** Height **** "+tree.isBalance(tree.root, 0));
-		
+		System.out.println("**** Is Tree Balance **** "+tree.isBalance(tree.root, 0));
+		System.out.println("******Node Found******"+tree.searchNode(tree.root, 4,false));
+		Node newRoot=tree.deleteNode(tree.root, 7);
+		tree.inOrder(newRoot);
+		tree.findDiameter(tree.root);
+		System.out.println("**** Daimeter is "+tree.diameter);
+		System.out.println("**** Level Traversal with Queue **** ");
+		tree.levelTraversalWithQueue(tree.root);
+		System.out.println("**** Level Traversal without Queue **** ");
+		tree.levelTraversalWithOutQueue(tree.root);
+		System.out.println("**** InOrder Traversal without Recursion and Stack **** ");
+		tree.inOrderTraversalWithOutRecursion(tree.root);
 		
 	}
 

@@ -10,6 +10,7 @@ package com.tutorial.tree;
 public class Node {
 	
 	private int data;
+	private boolean isVisited;
 	private Node left;
 	private Node right;
 	
@@ -37,6 +38,11 @@ public class Node {
 		this.right = right;
 	}
 	
-	
+	public void setVisited(boolean isVisited) {
+		this.isVisited = isVisited;
+	}
 
+	public boolean isVisited() {
+		return isVisited;
+	}
 }

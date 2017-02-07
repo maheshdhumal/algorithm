@@ -1,7 +1,5 @@
 package com.tutorial.tree;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -427,7 +425,5 @@ public class TreeData {
 		Collections.addAll(inList, inorder);
 		Node root=tree.constructTree(preList, inList);
 		tree.inOrder(root);
-		
-	}
-
+	}	
 }

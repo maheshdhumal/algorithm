@@ -3,6 +3,8 @@
  */
 package com.tutorial.tree;
 
+import java.util.Stack;
+
 /**
  * @author maheshd
  *
@@ -60,56 +62,138 @@ public class BinarySearchTree {
 	
 	private void merge(Node root1,Node root2)
 	{
-		leftMerge(root1, root2);
-		rightMerge(root1,root2);
+		Stack<Node> elements1=new Stack<Node>(); 
+		while(root1!=null)
+		{
+			elements1.push(root1);
+			root1=root1.getLeft();
+		}
+		
+		Stack<Node> elements2=new Stack<Node>(); 
+		while(root2!=null)
+		{
+			elements2.push(root2);
+			root2=root2.getLeft();
+		}
+		Node node1=elements1.pop();
+		Node node2=elements2.pop();
+		while(!(elements1.isEmpty() && elements2.isEmpty()))
+		{
+			if(node1==null)
+			{
+				node1=elements1.pop();
+			}
+			if(node2==null)
+			{
+				node2=elements2.pop();
+			}
+			
+			if(node1.getData() > node2.getData())
+			{
+				System.out.println(""+node2.getData());
+				if(node2.getRight()!=null)
+				{
+					node2=node2.getRight();
+					while(node2!=null)
+					{
+						elements2.push(node2);
+						node2=node2.getLeft();
+					}
+				}
+				node2=null;
+				
+			}
+			else
+			{
+				System.out.println(""+node1.getData());
+				if(node1.getRight()!=null)
+				{
+					node1=node1.getRight();
+					while(node1!=null)
+					{
+						elements1.push(node1);
+						node1=node1.getLeft();
+					}
+				}
+				node1=null;
+				
+			}
+		}
+		
 	}
-	private void leftMerge(Node root1, Node root2) {
-		if(root1==null||root2==null)
+	
+	private void mergeByRecursion(Node node1,Node node2)
+	{
+		if(node1==null)
 		{
 			return;
 		}
-		if(root1.getData() > root2.getData())
-		{
-			leftMerge(root1.getLeft(),root2);
-			inOrder(root2);
-			leftMerge(root1.getLeft(),root2.getRight());
-		}
-		else
-		{
-			leftMerge(root1,root2.getLeft());
-			inOrder(root1);
-			leftMerge(root1.getRight(),root2.getLeft());
-		}
-	}
-	
-	private void rightMerge(Node root1, Node root2) {
-		if(root1==null||root2==null)
+		if(node2==null)
 		{
 			return;
 		}
-		if(root1.getData() > root2.getData())
+		
+		if(node1.getData() > node2.getData())
 		{
-			rightMerge(root1,root2.getRight());
-			inOrder(root2);
-			rightMerge(root1.getLeft(),root2.getRight());
+			mergeByRecursion(node1.getLeft(), node2);
+			inOrderByRecursion(node2);
+			mergeByRecursion(node1, node2.getRight());
+			
 		}
-		else
+		else if(node1.getData() < node2.getData())
 		{
-			rightMerge(root1.getRight(),root2);
-			inOrder(root1);
-			rightMerge(root1.getRight(),root2.getLeft());
+			mergeByRecursion(node1, node2.getLeft());
+			inOrderByRecursion(node1);
+			mergeByRecursion(node1.getRight(), node2);
+			
 		}
+		
+		System.out.println(" "+node1.getData());
+		System.out.println(" "+node2.getData());
+		
 	}
 	
+	private void inOrderByRecursion(Node node)
+	{
+		if(node==null)
+		{
+			return;
+		}
+		inOrderByRecursion(node.getLeft());
+		if(!node.isVisited())
+		{
+		 System.out.println(" "+node.getData());
+		 node.setVisited(true);
+		}
+		//inOrderByRecursion(node.getRight());
+	}
+		
 	private void inOrder(Node root)
 	{
-		if(root==null || root.isVisited())
+		Stack<Node> elements=new Stack<Node>(); 
+		while(root!=null)
 		{
-			return;
+			elements.push(root);
+			root=root.getLeft();
 		}
-		inOrder(root.getLeft());
-		System.out.println(""+root.getData());
-		root.setVisited(true);
+		while(!elements.isEmpty())
+		{
+			Node node=elements.pop();
+			System.out.println(""+node.getData());
+			if(node.getRight()!=null)
+			{
+			  node=node.getRight();	
+			  while(node!=null)
+			  {
+				  elements.push(node);
+				  node=node.getLeft();
+			  }
+			}
+		}
+		
+		
+		
+		
 	}
 	
 	
@@ -118,28 +202,29 @@ public class BinarySearchTree {
 	public static void main(String[] args)
 	{
 		BinarySearchTree binaryTree=new BinarySearchTree();
-/*		int[] input={4,2,1,3,6,5,7,8,9};
+		int[] input={4,2,1,3,6,5,7,8,9};
 		binaryTree.root=null;
 		for(int i=0;i<input.length;i++)
 		{
 			binaryTree.root=binaryTree.constructBST(binaryTree.root,input[i]);
 		}
-		binaryTree.findAncestors(binaryTree.root, 1, 3);*/
+		//binaryTree.findAncestors(binaryTree.root, 1, 3);
 		
-		int[] input1={8,2,1,10};
+		int[] input1={8,2,1,4,6,10,14,18,16};
 		Node root1=null;
 		for(int i=0;i<input1.length;i++)
 		{
 			root1=binaryTree.constructBST(root1,input1[i]);
 		}
 		
-		int[] input2={5,3,0};
+		int[] input2={5,3,0,7,9,13,11,15};
 		Node root2=null;
 		for(int i=0;i<input2.length;i++)
 		{
 			root2=binaryTree.constructBST(root2,input2[i]);
 		}
-		binaryTree.merge(root1, root2);
+		//binaryTree.inOrder(root1);
+		binaryTree.mergeByRecursion(root1, root2);
 		
 	}
 

@@ -191,12 +191,183 @@ public class BinarySearchTree {
 			}
 		}
 		
-		
-		
-		
+	}
+	private void inOrderReverse(Node root)
+	{
+		Stack<Node> elements=new Stack <Node>();
+		elements.push(root);
+		while(root.getRight()!=null)
+		{
+			root=root.getRight();
+			elements.push(root);
+		}
+		while(!elements.isEmpty())
+		{
+			Node node=elements.pop();
+			System.out.println(""+node.getData());
+			if(node.getLeft()!=null)
+			{
+				node=node.getLeft();
+				elements.push(node);
+				while(node.getRight()!=null)
+				{
+					node=node.getRight();
+					elements.push(node);
+				}
+				
+			}
+		}
 	}
 	
+	private void findPairByGivenSum(Node root,int sum)
+	{
+		
+		Stack<Node> leftStack = new Stack<Node>();
+		leftStack.push(root);
+		Node leftNode = root.getLeft();
+		while (leftNode != null) {
+			leftStack.push(leftNode);
+			leftNode = leftNode.getLeft();
+		}
+
+		Stack<Node> rightStack = new Stack<Node>();
+		rightStack.push(root);
+		Node rightNode = root.getRight();
+		while (rightNode != null) {
+			rightStack.push(rightNode);
+			rightNode = rightNode.getRight();
+		}
+		while (!leftStack.isEmpty() || !rightStack.isEmpty()) {
+			if (leftNode == null) {
+				leftNode = leftStack.pop();
+			}
+			if (rightNode == null) {
+				rightNode = rightStack.pop();
+			}
+			if(leftNode.getData()==rightNode.getData())
+			{
+				break;
+			}
+			if (sum == (leftNode.getData() + rightNode.getData())) {
+				System.out.println("Two Nodes Found" + leftNode.getData() + " "
+						+ rightNode.getData());
+				break;
+			}
+			if (sum > (leftNode.getData() + rightNode.getData())) {
+				leftNode=leftNode.getRight();
+				while(leftNode!=null)
+				{
+					leftStack.push(leftNode);
+					leftNode = leftNode.getLeft();
+				}
+			} else {
+				
+				rightNode = rightNode.getLeft();
+				while(rightNode!=null)
+				{
+					rightStack.push(rightNode);
+					rightNode=rightNode.getRight();
+				}
+			}
+		}
+
+		System.out.println("Nodes Not Found");
+	}
+		
+	private void swapIncorrectNodes(Node root,Node previous,Node first,Node second)
+	{
+		if(root==null)
+		{
+			return ;
+		}
+		
+		swapIncorrectNodes(root.getLeft(),previous,first, second);
+		if(previous!=null && previous.getData() > root.getData())
+		{
+			if(first==null)
+			{
+				first=previous;
+				second=root;
+			}
+			else if(first!=previous)
+			{
+				second=previous;
+				System.out.println("First Node" +first.getData());
+				System.out.println("Second Node" +second.getData());
+				int temp=first.getData();
+				first.setData(second.getData());
+				second.setData(temp);
+			}
+		}
+		previous.setData(root.getData());
+	    swapIncorrectNodes(root.getRight(),previous, first, second);
+		if(previous!=null && previous.getData() > root.getData())
+		{
+			if(first==null)
+			{
+				first=previous;
+				second=root;
+			}
+			else if(first!=previous)
+			{
+				second=previous;
+				System.out.println("First Node" +first.getData());
+				System.out.println("Second Node" +second.getData());
+				int temp=first.getData();
+				first.setData(second.getData());
+				second.setData(temp);
+			}
+		}
+	}
 	
+	private void correctBST(Node root)
+	{
+		root=swapNodes(root,null, null, null);
+		System.out.println("****In order Traverse***");
+		inOrder(root);
+	}
+	
+	private Node swapNodes(Node root,Node previous,Node first,Node second)
+	{
+		Stack<Node> stack=new Stack<Node>();
+		Node rootLeft=root;
+		while(rootLeft!=null)
+		{
+			stack.push(rootLeft);
+			rootLeft=rootLeft.getLeft();
+		}
+		
+		while(!stack.isEmpty())
+		{
+			Node node=stack.pop();
+			if(previous!=null && previous.getData() > node.getData())
+			{
+				if(first==null)
+				{
+					first=previous;
+					second=node;
+				}
+				else if(first!=previous)
+				{
+					second=node;
+					break;
+				}
+			}
+			previous=node;
+			Node right=node.getRight();
+			while(right!=null)
+			{
+				stack.push(right);
+				right=right.getLeft();
+			}
+		}
+		System.out.println("First Node" +first.getData());
+		System.out.println("Second Node" +second.getData());
+		int temp=first.getData();
+		first.setData(second.getData());
+		second.setData(temp);
+		return root;
+	}
 	
 	
 	public static void main(String[] args)
@@ -224,7 +395,11 @@ public class BinarySearchTree {
 			root2=binaryTree.constructBST(root2,input2[i]);
 		}
 		//binaryTree.inOrder(root1);
-		binaryTree.mergeByRecursion(root1, root2);
+		//binaryTree.mergeByRecursion(root1, root2);
+		//binaryTree.findPairByGivenSum(root1, 9);
+		root1.getLeft().setData(4);
+		root1.getLeft().getRight().setData(2);
+		binaryTree.correctBST(root1);
 		
 	}
 

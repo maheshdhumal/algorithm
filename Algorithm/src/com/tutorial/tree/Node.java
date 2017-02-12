@@ -18,6 +18,11 @@ public class Node {
 	{
 		this.data=data;
 	}
+	
+	public Node()
+	{
+		this.data=data;
+	}
 		
 	public int getData() {
 		return data;

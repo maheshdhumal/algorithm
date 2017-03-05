@@ -3,6 +3,8 @@
  */
 package com.tutorial.queue;
 
+import java.util.LinkedList;
+
 /**
  * @author mahesh
  *
@@ -51,6 +53,83 @@ public class MyQueue {
 		return element;
 	}
 
+	public void findMaximumSubArray(int k,int[] aElement)
+	{
+		LinkedList<Integer> linkedList=new LinkedList<Integer>();
+		for(int i=0;i<k;i++)
+		{
+			while(!linkedList.isEmpty() && aElement[i] > aElement[linkedList.peekLast()])
+			{
+				linkedList.removeLast();
+			}
+			linkedList.addLast(i);
+		}
+		for(int i=k;i<aElement.length;i++)
+		{
+			int count=linkedList.peekFirst();
+			System.out.println(""+aElement[count]);
+			if(count==i-k)
+			{
+				linkedList.removeFirst();
+			}
+			while(!linkedList.isEmpty() && aElement[i] > aElement[linkedList.peekLast()])
+			{
+				linkedList.removeLast();
+			}
+			linkedList.addLast(i);
+		}
+		System.out.println(""+aElement[linkedList.removeFirst()]);
+		
+	}
+	
+	public void findSumOfMaxAndMinSubArray(int k,int[] aElement)
+	{
+		LinkedList<Integer> maxLinkedList=new LinkedList<Integer>();
+		LinkedList<Integer> minLinkedList=new LinkedList<Integer>();
+		for(int i=0;i<k;i++)
+		{
+			while(!maxLinkedList.isEmpty() && aElement[i] > aElement[maxLinkedList.peekLast()])
+			{
+				maxLinkedList.removeLast();
+			}
+			while(!minLinkedList.isEmpty() && aElement[i] < aElement[minLinkedList.peekLast()])
+			{
+				minLinkedList.removeLast();
+			}
+			maxLinkedList.addLast(i);
+			minLinkedList.addLast(i);
+		}
+		for(int i=k;i<aElement.length;i++)
+		{
+			int max=maxLinkedList.peekFirst();
+			int min=minLinkedList.peekFirst();
+			System.out.println(""+(aElement[max]+aElement[min]));
+			if(max==i-k)
+			{
+				maxLinkedList.removeFirst();
+			}
+			while(!maxLinkedList.isEmpty() && aElement[i] > aElement[maxLinkedList.peekLast()])
+			{
+				maxLinkedList.removeLast();
+			}
+			maxLinkedList.addLast(i);
+			
+			
+			if(min==i-k)
+			{
+				minLinkedList.removeFirst();
+			}
+			while(!minLinkedList.isEmpty() && aElement[i] < aElement[minLinkedList.peekLast()])
+			{
+				minLinkedList.removeLast();
+			}
+			minLinkedList.addLast(i);
+			
+			
+		}
+		System.out.println(""+(aElement[maxLinkedList.removeFirst()]+aElement[minLinkedList.removeFirst()]));
+		
+	}
 	
 	public static void main(String[] args)
 	{
@@ -69,5 +148,8 @@ public class MyQueue {
 		myQueue.dequeue();
 		myQueue.dequeue();
 		myQueue.dequeue();
+		int[] aElement= {8, 5, 10, 7, 9, 4, 15, 12, 90, 13};
+		myQueue.findMaximumSubArray(4, aElement);
+		myQueue.findSumOfMaxAndMinSubArray(4, aElement);
 	}
 }
